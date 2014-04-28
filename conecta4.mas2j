@@ -1,0 +1,13 @@
+/* Jason Project */
+
+MAS conecta4 {
+
+    infrastructure: Centralised
+
+    environment: blackboard
+
+    agents:
+        jugador1;
+
+}
+
