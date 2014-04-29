@@ -42,8 +42,8 @@ public class FourinrowBoard extends Environment {
     public boolean executeAction(String ag, Structure action) {
         logger.log(Level.INFO, "El agente <{0}> ejecuta la acción: {1}", new Object[]{ag, action});
         
-        try {
-            if (action.getFunctor().equals("put")) {
+        if (action.getFunctor().equals("put")) {
+            try {
                 int x = (int)((NumberTerm)action.getTerm(0)).solve();
                 
                 switch (ag) {
@@ -55,17 +55,15 @@ public class FourinrowBoard extends Environment {
                         break;
                     default:
                         logger.log(Level.SEVERE, "No se reconoce el nombre del agente: {0}", ag);
-                        break;
+                        return false;
                 }
             }
-            else {
+            catch (NoValueForVarException e) {
+                logger.log(Level.SEVERE, e.getMessage());
                 return false;
             }
         }
-        catch (NoValueForVarException e) {
-            logger.log(Level.SEVERE, e.getMessage());
-        }
-        
+            
         /* Se espera un tiempo para evitar errores inesperados */
         try {
             Thread.sleep(200);
