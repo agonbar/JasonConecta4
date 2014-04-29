@@ -1,4 +1,3 @@
-// Environment code for project conecta4.mas2j
 
 import jason.asSyntax.*;
 import jason.environment.Environment;
@@ -15,10 +14,7 @@ import java.util.logging.Logger;
 public class blackboard extends Environment {
 	
 	public static final int GSize = 8; // tamaño tablero
-	public static final int BLUE  = 16; // ficha azul
-    public static final int RED  = 32; // ficha roja
-	
-	public static final Term    put = Literal.parseLiteral("put(X)");
+	public static final int BLUE  = 14; // ficha azul
 
     private Logger logger = Logger.getLogger("conecta4.mas2j."+blackboard.class.getName());
 	
@@ -36,9 +32,10 @@ public class blackboard extends Environment {
     public boolean executeAction(String ag, Structure action) {
         logger.info(ag+" doing: "+ action);
         try {
-            if (action.equals(put)) {
-                model.put();
-            }
+            if (action.getFunctor().equals("put")) {
+                int x = (int)((NumberTerm)action.getTerm(0)).solve();
+                model.put(x);
+            } else{return false;}
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,27 +51,41 @@ public class blackboard extends Environment {
     
 
     void updatePercepts() {
-        clearPercepts();
-        
-        Location r1Loc = model.getAgPos(0);
-		Location r2Loc = model.getAgPos(1);
-        
-        Literal pos1 = Literal.parseLiteral("pos(r1," + r1Loc.x + "," + r1Loc.y + ")");
-
-        addPercept(pos1);
+    
         
     }
 
     class MarsModel extends GridWorldModel {
         
 
+       
+        Random random = new Random(System.currentTimeMillis());
         private MarsModel() {
-            super(GSize, GSize, 1);
-			add(BLUE, 3, 0);
-		}
-		public void put() {
-			//add(BLUE, 3, 0);
+            super(GSize, GSize, 2);
+            // initial location of agents
+            try {
+               //setAgPos(0, 0, 0);
+                Location r2Loc = new Location(GSize/2, GSize/2);
+                //setAgPos(1, r2Loc);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // initial location of garbage
+        }
+		public void put(int x) {
+			try{
+			int p=0;
+			while(p<getHeight() &&!isFree(x,p)){
+				p++;
 		}	
+		if(p >= getHeight()){
+			System.out.println("overflow");
+	}else{
+		add(BLUE,x,p);
+		Thread.sleep(500);
+	}
+	}catch (Exception e) { }
+}
 	}
 	
 	class MarsView extends GridWorldView {
@@ -93,8 +104,11 @@ public class blackboard extends Environment {
         }
 		
         public void drawFicha(Graphics g, int x, int y) {
-			g.setColor(Color.blue);
-            g.fillOval(75*x,75*y,70,70);
+            g.setColor(Color.blue);
+			g.fillOval(x,y,70,70);
+			
+       
         }
 	}
 }
+
