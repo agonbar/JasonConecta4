@@ -42,26 +42,31 @@ public class FourinrowBoard extends Environment {
     public boolean executeAction(String ag, Structure action) {
         logger.log(Level.INFO, "El agente <{0}> ejecuta la acción: {1}", new Object[]{ag, action});
         
-        if (action.getFunctor().equals("put")) {
-            try {
-                int x = (int)((NumberTerm)action.getTerm(0)).solve();
-                
-                switch (ag) {
-                    case JugadorPrimario:
-                        model.put(Ficha.BLUE, x);
-                        break;
-                    case JugadorSecundario:
-                        model.put(Ficha.RED, x);
-                        break;
-                    default:
-                        logger.log(Level.SEVERE, "No se reconoce el nombre del agente: {0}", ag);
-                        return false;
+        switch (action.getFunctor()) {
+            case "put":
+                try {
+                    int x = (int)((NumberTerm)action.getTerm(0)).solve();
+
+                    switch (ag) {
+                        case JugadorPrimario:
+                            model.put(Ficha.BLUE, x);
+                            break;
+                        case JugadorSecundario:
+                            model.put(Ficha.RED, x);
+                            break;
+                        default:
+                            logger.log(Level.SEVERE, "No se reconoce el nombre del agente: {0}", ag);
+                            return false;
+                    }
                 }
-            }
-            catch (NoValueForVarException e) {
-                logger.log(Level.SEVERE, e.getMessage());
+                catch (NoValueForVarException e) {
+                    logger.log(Level.SEVERE, e.getMessage());
+                    return false;
+                }
+                break;
+            default:
+                logger.log(Level.SEVERE, "El agente <{0}> ejecutó la acción no reconocida: {1}", new Object[]{ag, action});
                 return false;
-            }
         }
             
         /* Se espera un tiempo para evitar errores inesperados */
