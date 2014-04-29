@@ -40,7 +40,7 @@ public class FourinrowBoard extends Environment {
 	
     @Override
     public boolean executeAction(String ag, Structure action) {
-        logger.log(Level.INFO, "El agente <{0}> ejecuta la acción: {1}", new Object[]{ag, action});
+        logger.log(Level.INFO, "El agente <" + ag + "> ejecuta la acción <" + action.getFunctor() + ">");
         
         switch (action.getFunctor()) {
             case "put":
@@ -55,7 +55,7 @@ public class FourinrowBoard extends Environment {
                             model.put(Ficha.RED, x);
                             break;
                         default:
-                            logger.log(Level.SEVERE, "No se reconoce el nombre del agente: {0}", ag);
+                            logger.log(Level.SEVERE, "No se reconoce el nombre del agente <" + ag + ">");
                             return false;
                     }
                 }
@@ -65,7 +65,7 @@ public class FourinrowBoard extends Environment {
                 }
                 break;
             default:
-                logger.log(Level.SEVERE, "El agente <{0}> ejecutó la acción no reconocida: {1}", new Object[]{ag, action});
+                logger.log(Level.SEVERE, "El agente <" + ag + "> ejecutó la acción no reconocida <" + action.getFunctor() + ">");
                 return false;
         }
             
