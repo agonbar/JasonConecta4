@@ -18,8 +18,8 @@ public class FourinrowBoard extends Environment {
     private enum Ficha { RED, BLUE };
     
     /* Nombres de los agentes */
-    private final String JugadorPrimario = "JugadorPrimario";
-    private final String JugadorSecundario = "JugadorSecundario";
+    private final String JugadorPrimario = "jugadorPrimario";
+    private final String JugadorSecundario = "jugadorSecundario";
 
     private static final Logger logger = Logger.getLogger("conecta4.mas2j." + FourinrowBoard.class.getName());
 	

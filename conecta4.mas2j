@@ -7,7 +7,7 @@ MAS conecta4 {
     environment: FourinrowBoard
 
     agents:
-        JugadorPrimario;
+        jugadorPrimario;
 
 }
 
