@@ -1,4 +1,3 @@
-import jason.NoValueForVarException;
 import jason.asSyntax.NumberTerm;
 import jason.asSyntax.Structure;
 import jason.environment.Environment;
@@ -59,7 +58,7 @@ public class FourinrowBoard extends Environment {
                             return false;
                     }
                 }
-                catch (NoValueForVarException e) {
+                catch (Exception e) {
                     logger.log(Level.SEVERE, e.getMessage());
                     return false;
                 }
