@@ -1,5 +1,6 @@
 import jason.NoValueForVarException;
-import jason.asSyntax.*;
+import jason.asSyntax.NumberTerm;
+import jason.asSyntax.Structure;
 import jason.environment.Environment;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.GridWorldView;
@@ -12,25 +13,25 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class blackboard extends Environment {
+public class FourinrowBoard extends Environment {
     /* Tamaño del tablero */
     public static final int GSize = 8;
     /* Fichas del juego */
     public static final int BLUE = 1;
     public static final int RED = 2;
 
-    private static final Logger logger = Logger.getLogger("conecta4.mas2j." + blackboard.class.getName());
+    private static final Logger logger = Logger.getLogger("conecta4.mas2j." + FourinrowBoard.class.getName());
 	
-    private MarsModel model;
-    private MarsView  view;
+    private FourinrowModel model;
+    private FourinrowView  view;
     
     @Override
     public void init(String[] args) {
         /* Crear un modelo */
-        model = new MarsModel();
+        model = new FourinrowModel();
         
         /* Crear la vista con ese modelo */
-        view  = new MarsView(model);
+        view  = new FourinrowView(model);
         
         /* Asociar la vista con el modelo */
         model.setView(view);
@@ -68,9 +69,9 @@ public class blackboard extends Environment {
     void updatePercepts() {
     }
 
-    class MarsModel extends GridWorldModel {
+    class FourinrowModel extends GridWorldModel {
         
-        private MarsModel() {
+        private FourinrowModel() {
             super(GSize, GSize, 2);
             
             this.random = new Random(System.currentTimeMillis());
@@ -102,8 +103,8 @@ public class blackboard extends Environment {
         }
     }
 	
-    class MarsView extends GridWorldView {
-        public MarsView(MarsModel model) {
+    class FourinrowView extends GridWorldView {
+        public FourinrowView(FourinrowModel model) {
             super(model, "Conecta4", 600);
             
             defaultFont = new Font("Arial", Font.BOLD, 18);
@@ -116,12 +117,17 @@ public class blackboard extends Environment {
         @Override
         public void draw(Graphics g, int x, int y, int object) {
             switch (object) {
-                case blackboard.BLUE: drawFicha(g, x, y);  break;
+                case FourinrowBoard.BLUE:
+                    drawFicha(g, x, y, Color.BLUE);
+                    break;
+                case FourinrowBoard.RED:
+                    drawFicha(g, x, y, Color.RED);
+                    break;
             }
         }
         
-        public void drawFicha(Graphics g, int x, int y) {
-            g.setColor(Color.blue);
+        public void drawFicha(Graphics g, int x, int y, Color col) {
+            g.setColor(col);
             g.fillOval(x,y,70,70);
         }
     }

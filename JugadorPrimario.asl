@@ -4,4 +4,4 @@
 
 /* Plans */
 
-+!start : true <- put(3);put(4);put(4).
++!start : true <- put(3); put(4); put(4).
