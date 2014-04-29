@@ -1,4 +1,3 @@
-
 import jason.asSyntax.*;
 import jason.environment.Environment;
 import jason.environment.grid.GridWorldModel;
@@ -11,8 +10,7 @@ import java.awt.Graphics;
 import java.util.Random;
 import java.util.logging.Logger;
 
-public class blackboard extends Environment {
-	
+public class blackboard extends Environment {	
 	public static final int GSize = 8; // tamaño tablero
 	public static final int BLUE  = 14; // ficha azul
 
@@ -39,9 +37,7 @@ public class blackboard extends Environment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
         updatePercepts();
-
         try {
             Thread.sleep(200);
         } catch (Exception e) {}
@@ -49,65 +45,50 @@ public class blackboard extends Environment {
         return true;
     }
     
-
     void updatePercepts() {
-    
-        
     }
 
     class MarsModel extends GridWorldModel {
-        
-
-       
         Random random = new Random(System.currentTimeMillis());
         private MarsModel() {
             super(GSize, GSize, 2);
-            // initial location of agents
             try {
-               //setAgPos(0, 0, 0);
                 Location r2Loc = new Location(GSize/2, GSize/2);
-                //setAgPos(1, r2Loc);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // initial location of garbage
         }
 		public void put(int x) {
 			try{
-			int p=0;
-			while(p<getHeight() &&!isFree(x,p)){
-				p++;
-		}	
-		if(p >= getHeight()){
-			System.out.println("overflow");
-	}else{
-		add(BLUE,x,p);
-		Thread.sleep(500);
-	}
-	}catch (Exception e) { }
-}
+				int p=getHeight();
+				while(p>=0 &&!isFree(x,p)){
+				p--;
+				} 
+				if(p  <0){
+					System.out.println("overflow");
+				}else{
+					add(BLUE,x,p);
+					Thread.sleep(500);
+				}
+			}catch (Exception e) { }
+		}
 	}
 	
 	class MarsView extends GridWorldView {
-
         public MarsView(MarsModel model) {
             super(model, "Conecta4", 600);
-            defaultFont = new Font("Arial", Font.BOLD, 18); // change default font
+            defaultFont = new Font("Arial", Font.BOLD, 18);
             setVisible(true);
             repaint();
         }
-		
 		public void draw(Graphics g, int x, int y, int object) {
             switch (object) {
                 case blackboard.BLUE: drawFicha(g, x, y);  break;
             }
         }
-		
         public void drawFicha(Graphics g, int x, int y) {
             g.setColor(Color.blue);
 			g.fillOval(x,y,70,70);
-			
-       
         }
 	}
 }
