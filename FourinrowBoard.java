@@ -4,21 +4,22 @@ import jason.asSyntax.Structure;
 import jason.environment.Environment;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.GridWorldView;
-import jason.environment.grid.Location;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class FourinrowBoard extends Environment {
     /* Tamaño del tablero */
-    public static final int GSize = 8;
+    private static final int GSize = 8;
     /* Fichas del juego */
-    public static final int BLUE = 1;
-    public static final int RED = 2;
+    private enum Ficha { RED, BLUE };
+    
+    /* Nombres de los agentes */
+    private final String JugadorPrimario = "JugadorPrimario";
+    private final String JugadorSecundario = "JugadorSecundario";
 
     private static final Logger logger = Logger.getLogger("conecta4.mas2j." + FourinrowBoard.class.getName());
 	
@@ -39,12 +40,23 @@ public class FourinrowBoard extends Environment {
 	
     @Override
     public boolean executeAction(String ag, Structure action) {
-        logger.log(Level.INFO, "{0} doing: {1}", new Object[]{ag, action});
+        logger.log(Level.INFO, "El agente <{0}> ejecuta la acción: {1}", new Object[]{ag, action});
         
         try {
             if (action.getFunctor().equals("put")) {
                 int x = (int)((NumberTerm)action.getTerm(0)).solve();
-                model.put(x);
+                
+                switch (ag) {
+                    case JugadorPrimario:
+                        model.put(Ficha.BLUE, x);
+                        break;
+                    case JugadorSecundario:
+                        model.put(Ficha.RED, x);
+                        break;
+                    default:
+                        logger.log(Level.SEVERE, "No se reconoce el nombre del agente: {0}", ag);
+                        break;
+                }
             }
             else {
                 return false;
@@ -54,57 +66,49 @@ public class FourinrowBoard extends Environment {
             logger.log(Level.SEVERE, e.getMessage());
         }
         
-        updatePercepts();
-        
+        /* Se espera un tiempo para evitar errores inesperados */
         try {
             Thread.sleep(200);
         }
         catch (InterruptedException e) {}
         
+        /* TODO: Comprobar si el juego ha finalizado */
+        
         informAgsEnvironmentChanged();
         
         return true;
     }
-    
-    void updatePercepts() {
-    }
 
     class FourinrowModel extends GridWorldModel {
+        private final Logger logger = Logger.getLogger("conecta4.mas2j." + FourinrowModel.class.getName());
         
         private FourinrowModel() {
             super(GSize, GSize, 2);
-            
-            this.random = new Random(System.currentTimeMillis());
-            
-            try {
-                Location r2Loc = new Location(GSize/2, GSize/2);
-            }
-            catch (Exception e) {
-                logger.log(Level.SEVERE, e.getMessage());
-            }
         }
-        public void put(int x) {
-            try{
-                int p = getHeight();
+        
+        public void put(Ficha f, int x) {
+            int p = getHeight();
+
+            while (p >= 0 && !isFree(x, p)) {
+                p--;
+            }
+
+            if (p < 0){
+                logger.log(Level.SEVERE, "Se está intentando insertar una ficha en una columna completa");
+            }
+            else {
+                this.add(f.ordinal(), x, p);
                 
-                while (p >= 0 && !isFree(x,p)) {
-                    p--;
-                }
-                
-                if (p < 0){
-                        System.out.println("overflow");
-                }
-                else {
-                    add(BLUE, x, p);
+                try {
                     Thread.sleep(500);
                 }
+                catch (InterruptedException e) { }
             }
-            catch (InterruptedException e) { }
         }
     }
 	
     class FourinrowView extends GridWorldView {
-        public FourinrowView(FourinrowModel model) {
+        public FourinrowView (FourinrowModel model) {
             super(model, "Conecta4", 600);
             
             defaultFont = new Font("Arial", Font.BOLD, 18);
@@ -116,13 +120,11 @@ public class FourinrowBoard extends Environment {
 	
         @Override
         public void draw(Graphics g, int x, int y, int object) {
-            switch (object) {
-                case FourinrowBoard.BLUE:
-                    drawFicha(g, x, y, Color.BLUE);
-                    break;
-                case FourinrowBoard.RED:
-                    drawFicha(g, x, y, Color.RED);
-                    break;
+            if (object == Ficha.BLUE.ordinal()) {
+                drawFicha(g, x, y, Color.BLUE);
+            }
+            else if (object == Ficha.RED.ordinal()) {
+                drawFicha(g, x, y, Color.RED);
             }
         }
         
