@@ -1,3 +1,4 @@
+import jason.NoValueForVarException;
 import jason.asSyntax.NumberTerm;
 import jason.asSyntax.Structure;
 import jason.environment.Environment;
@@ -58,7 +59,7 @@ public class FourinrowBoard extends Environment {
                             return false;
                     }
                 }
-                catch (Exception e) {
+                catch (NoValueForVarException e) {
                     logger.log(Level.SEVERE, e.getMessage());
                     return false;
                 }
@@ -67,6 +68,8 @@ public class FourinrowBoard extends Environment {
                 logger.log(Level.SEVERE, "El agente <" + ag + "> ejecutó la acción no reconocida <" + action.getFunctor() + ">");
                 return false;
         }
+        
+        updatePercepts();
             
         /* Se espera un tiempo para evitar errores inesperados */
         try {
@@ -79,6 +82,12 @@ public class FourinrowBoard extends Environment {
         informAgsEnvironmentChanged();
         
         return true;
+    }
+    
+    void updatePercepts() {
+        this.clearPercepts();
+        
+        /* TODO: Notificar posicion de las fichas */
     }
 
     class FourinrowModel extends GridWorldModel {
@@ -110,10 +119,15 @@ public class FourinrowBoard extends Environment {
     }
 	
     class FourinrowView extends GridWorldView {
+        private final Logger logger = Logger.getLogger("conecta4.mas2j." + GridWorldView.class.getName());
+        
+        private static final String window_title = "Conecta 4";
+        private static final int window_width = 800;
+        
         public FourinrowView (FourinrowModel model) {
-            super(model, "Conecta4", 600);
+            super(model, window_title, window_width);
             
-            defaultFont = new Font("Arial", Font.BOLD, 18);
+            this.defaultFont = new Font("Arial", Font.BOLD, 18);
             
             setVisible(true);
             
@@ -121,11 +135,13 @@ public class FourinrowBoard extends Environment {
         }
 	
         @Override
-        public void draw(Graphics g, int x, int y, int object) {
-            if (object == Ficha.BLUE.ordinal()) {
+        public void draw(Graphics g, int x, int y, int id) {
+            logger.log(Level.INFO, "Pintando ficha " + id);
+            
+            if (id == Ficha.BLUE.ordinal()) {
                 drawFicha(g, x, y, Color.BLUE);
             }
-            else if (object == Ficha.RED.ordinal()) {
+            else if (id == Ficha.RED.ordinal()) {
                 drawFicha(g, x, y, Color.RED);
             }
         }
