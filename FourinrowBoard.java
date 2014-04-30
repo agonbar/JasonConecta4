@@ -2,7 +2,6 @@ import jason.NoValueForVarException;
 import jason.asSyntax.NumberTerm;
 import jason.asSyntax.Structure;
 import jason.environment.Environment;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,58 +10,67 @@ public class FourinrowBoard extends Environment {
     private static final int GSize = 8;
     
     /* Nombres de los agentes */
-    private final String JugadorPrimario = "jugadorPrimario";
-    private final String JugadorSecundario = "jugadorSecundario";
+    private static final String JugadorPrimario = "jugadorPrimario";
+    private static final String JugadorSecundario = "jugadorSecundario";
+    
+    /* Comandos */
+    private static final String tPut = "put";
 
+    /* Variables internas de la clase */
     private static final Logger logger = Logger.getLogger("conecta4.mas2j." + FourinrowBoard.class.getName());
 	
-    private FourinrowBoardModel model;
-    private FourinrowBoardView  view;
+    private final FourinrowBoardModel model;
+    private final FourinrowBoardView  view;
+    
+    public FourinrowBoard() {
+        /* Crear un modelo */
+        this.model = new FourinrowBoardModel(FourinrowBoard.GSize, FourinrowBoard.GSize, 2);
+        
+        /* Crear la vista con ese modelo */
+        this.view  = new FourinrowBoardView(this.model);
+        
+        /* Asociar la vista con el modelo */
+        this.model.setView(this.view);
+        
+        this.updatePercepts();
+    }
     
     @Override
     public void init(String[] args) {
-        /* Crear un modelo */
-        model = new FourinrowBoardModel(GSize, GSize, 2);
-        
-        /* Crear la vista con ese modelo */
-        view  = new FourinrowBoardView(model);
-        
-        /* Asociar la vista con el modelo */
-        model.setView(view);
+        this.view.setVisible(true);
     }
 	
     @Override
     public boolean executeAction(String ag, Structure action) {
         logger.log(Level.INFO, "El agente <" + ag + "> ejecuta la acción <" + action.getFunctor() + ">");
         
-        switch (action.getFunctor()) {
-            case "put":
-                try {
-                    int x = (int)((NumberTerm)action.getTerm(0)).solve();
+        if (action.getFunctor().equals(FourinrowBoard.tPut)) {
+            try {
+                int x = (int)((NumberTerm)action.getTerm(0)).solve();
 
-                    switch (ag) {
-                        case JugadorPrimario:
-                            model.put(FourinrowChip.BLUE, x);
-                            break;
-                        case JugadorSecundario:
-                            model.put(FourinrowChip.RED, x);
-                            break;
-                        default:
-                            logger.log(Level.SEVERE, "No se reconoce el nombre del agente <" + ag + ">");
-                            return false;
-                    }
+                switch (ag) {
+                    case JugadorPrimario:
+                        model.put(FourinrowChip.BLUE, x);
+                        break;
+                    case JugadorSecundario:
+                        model.put(FourinrowChip.RED, x);
+                        break;
+                    default:
+                        logger.log(Level.SEVERE, "No se reconoce el nombre del agente <" + ag + ">");
+                        return false;
                 }
-                catch (NoValueForVarException e) {
-                    logger.log(Level.SEVERE, e.getMessage());
-                    return false;
-                }
-                break;
-            default:
-                logger.log(Level.SEVERE, "El agente <" + ag + "> ejecutó la acción no reconocida <" + action.getFunctor() + ">");
+            }
+            catch (NoValueForVarException e) {
+                logger.log(Level.SEVERE, e.getMessage());
                 return false;
+            }
+        }
+        else {
+            logger.log(Level.SEVERE, "El agente <" + ag + "> ejecutó la acción no reconocida <" + action.getFunctor() + ">");
+            return false;
         }
         
-        updatePercepts();
+        this.updatePercepts();
             
         /* Se espera un tiempo para evitar errores inesperados */
         try {
@@ -77,7 +85,7 @@ public class FourinrowBoard extends Environment {
         return true;
     }
     
-    void updatePercepts() {
+    private void updatePercepts() {
         this.clearPercepts();
         
         /* TODO: Notificar posicion de las fichas */
