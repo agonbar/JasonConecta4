@@ -100,13 +100,13 @@ public class blackboard extends Environment {
 		
 		public void draw(Graphics g, int x, int y, int object) {
 			switch (object) {
-                case blackboard.BLUE: drawFicha(g, x, y, 2);  break;
+                case blackboard.BLUE: drawFicha(g, x, y);  break;
             }
         }
 
-        public void drawFicha(Graphics g, int x, int y, int id) {
-			if (id == 1) g.setColor(Color.blue);
-			else g.setColor(Color.red);
+        public void drawFicha(Graphics g, int x, int y) {
+		
+			g.setColor(Color.blue);
 		
 			g.fillOval(x,y,70,70);
 			
