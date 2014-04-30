@@ -1,7 +1,8 @@
+
 /* Initial goals */
 
 !start.
 
 /* Plans */
 
-+!start : true <- put(3); put(4); put(4).
++!start : true <- put(5);put(5);put(6).

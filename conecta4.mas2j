@@ -4,10 +4,13 @@ MAS conecta4 {
 
     infrastructure: Centralised
 
-    environment: FourinrowBoard
+    environment: blackboard
 
     agents:
-        jugadorPrimario;
+        jugador1;
+	
+
+        jugador2;
 
 }
 
